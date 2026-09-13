@@ -1,0 +1,459 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* Global */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-family: "Poppins", serif;
+    font-size: 62.5%;
+}
+
+img {
+    width: 100%;
+}
+
+.background {
+    background-image: url(/img/Backgroun_image.webp);
+    height: 100vh;
+    width: 100%;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
+    height: 100vh;
+    width: 100%;
+    padding: 3rem 2rem;
+}
+
+/* Barra de navegación */
+.nav {
+    background-color: #ffffff79;
+    backdrop-filter: blur(40px);
+    border-radius: 12rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 2rem;
+    z-index: 102;
+}
+
+.nav-icon {
+    border: none;
+    background-color: transparent;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon:hover {
+    background-color: #ffffff6b;
+    cursor: pointer;
+}
+
+.nav-icon--active {
+    background-color: #ffffff6b;
+}
+
+.nav-icon box-icon {
+    fill: #3b413a;
+}
+
+/*Contenido principal*/
+.content {
+    height: 80%;
+    position: relative; /* P. posicionar info infreior por*/
+}
+
+/* Productos */
+.products {
+    background-color: #ffffff59;
+    border-radius: 3.2rem;
+    padding: 2.6rem;
+    backdrop-filter: blur(40px);
+    display: flex; /* P. Para cuando al poner a su tercer hijo en position absolute no se desborde */
+    flex-direction: column;
+    height: 100%;
+}
+
+/* header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 3rem;
+}
+
+.header__controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.control {
+    border: none;
+    background-color: transparent;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control box-icons {
+    fill: #3b413a;
+}
+
+.control:hover {
+    background-color: #ffffff6b;
+}
+
+.control--active {
+    background-color: #ffffff6b;
+}
+
+.header__search {
+    background-color: #ffffff59;
+    border-radius: 3.2rem;
+    max-width: 13.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+}
+
+.search-input {
+    background-color: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.6rem;
+    color: #5e6d59;
+}
+
+.search-button {
+    background: none;
+    border: none;
+}
+
+/* CAROUSEL */
+.carousel {
+    height: 100%;
+    width: 100%;
+    position: relative; /* Para Poner */
+}
+
+.carousel__container {
+    height: 100%;
+    width: 100%;
+    /* Ángulo actual de la rueda (en deg). script.js lo cambia en vivo mientras
+       arrastrás, sin límites — por eso el giro es infinito en ambos sentidos. */
+    --wheel-rotation: 0deg;
+    /* Distancia del eje central a cada planta; se ajusta por breakpoint más abajo. */
+    --radius: 17rem;
+    /* Cuánto se emborronan las plantas al alejarse de "frente"; más sutil en desktop. */
+    --blur-strength: 4px;
+    touch-action: pan-y;
+    perspective: 90rem;
+    perspective-origin: 50% 55%;
+    /* Necesario para que los items (rotados en distintos ángulos) se compongan
+       como una escena 3D real en vez de aplanarse todos al mismo plano. */
+    transform-style: preserve-3d;
+}
+
+/* Mientras se arrastra, sin transición: la rueda debe girar 1 a 1 con el dedo/mouse,
+   no animar detrás de él. Al soltar se saca esta clase y vuelve la transición,
+   así el encastre en la planta más cercana queda animado. */
+.carousel__container.is-dragging .carousel__item {
+    transition: none;
+}
+
+/* Cada planta vive en un ángulo FIJO alrededor del eje (--angle, asignado una
+   sola vez por script.js al iniciar) y todas giran juntas con --wheel-rotation,
+   como una rueda real. --front-amount mide qué tan "de frente" está cada una en
+   este instante (1 = mirando a cámara, 0 = de perfil) y de ahí salen opacidad,
+   blur y escala — todo recalculado por el navegador en cada frame del arrastre,
+   sin loop de JS ni animación manual. */
+.carousel__item {
+    position: absolute;
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    bottom: 0;
+    left: 50%;
+    top: 60%;
+    --angle: 0deg;
+    --front-amount: cos(calc(var(--angle) + var(--wheel-rotation)));
+    /* Versión "recortada en 0" y elevada al cuadrado: sube mucho más rápido
+       cerca del frente, para que se note claramente cuál planta es la protagonista
+       en vez de que todas las cercanas se vean igual de grandes. */
+    --focus: calc(max(var(--front-amount), 0) * max(var(--front-amount), 0));
+    /* La planta viaja por el círculo (gira, se aleja, cambia de tamaño en
+       perspectiva) pero el último rotateY() contra-rota exactamente lo mismo
+       que giró antes, así queda siempre de frente/plana, nunca inclinada.
+       Es la técnica de "billboard": la posición es 3D, el dibujo es plano. */
+    transform: translate(-50%, -50%) rotateY(calc(var(--angle) + var(--wheel-rotation))) translateZ(var(--radius))
+        rotateY(calc(-1 * (var(--angle) + var(--wheel-rotation))));
+    opacity: clamp(0, calc((var(--front-amount) - 0.3) / 0.5), 1);
+    filter: blur(calc((1 - var(--front-amount)) * var(--blur-strength)));
+    /* Los items no deben capturar clicks: bloqueaban los botones de navegación
+       que están debajo. */
+    pointer-events: none;
+
+    will-change: transform, opacity, filter;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+/* Tarjeta translúcida detrás de cada planta lateral, para que se note el cambio
+   de tamaño/blur al moverse. Se desvanece cuando la planta queda de frente, para
+   no taparla. Sin box-shadow ni backdrop-filter: con 10 plantas girando a la vez
+   durante el arrastre, esos dos efectos son los que más cuestan recalcular por
+   frame (lo medimos: costaban ~10fps) y un borde + degradé ya se lee bien. */
+.carousel__item::before {
+    content: "";
+    position: absolute;
+    inset: -1.2rem -1.6rem;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.06));
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 2rem;
+    z-index: -1;
+    opacity: clamp(0, calc((1 - var(--front-amount)) * 5), 1);
+}
+
+/*Todas los contenedores de las imágenes van a tener 10rem altura y la imagen ocupara el 100 de este contenedor*/
+.carousel__image {
+    height: 10rem;
+    will-change: transform;
+    transition: transform 0.3s ease-in-out;
+    /* La planta que está de frente crece; las de perfil quedan a tamaño base. */
+    transform: scale(calc(1 + var(--focus) * 1.6));
+}
+
+.carousel__image img {
+    height: 100%;
+    width: auto;
+}
+
+.carousel__item-details {
+    padding: 2rem 0;
+    will-change: transform, opacity;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    /* El texto se oculta en la planta de frente (queda solo la imagen grande,
+       igual que antes) y aparece en las de perfil. */
+    opacity: clamp(0, calc((1 - var(--front-amount)) * 5), 1);
+    transform: translateY(calc(var(--front-amount) * 3rem));
+}
+
+.carousel__item-title {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 400;
+}
+
+.carousel__item-price {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+/* Controles del carrusel */
+.carousel__controls-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.carousel__controls-container > * {
+    pointer-events: auto;
+}
+
+.carousel__controls-container button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    width: 5rem;
+    height: 5rem;
+    color: #ffffff;
+    background-color: #f4f4f400;
+    border-radius: 3rem;
+    outline: none;
+    user-select: none;
+    will-change: background-color;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.carousel__controls-container button svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    pointer-events: none;
+}
+
+.carousel__controls-container button:hover {
+    background-color: #ffffff33;
+}
+
+.carousel-controls-prev {
+    left: 0rem;
+}
+
+.carousel-controls-next {
+    right: 0rem;
+}
+
+/* Opcional */
+.carousel__container {
+    /* user-select: none; */
+    cursor: grab;
+}
+
+.carousel__container:active {
+    cursor: grabbing;
+}
+
+/* Contenedor inferior agregar a carrito */
+.footer {
+    width: 100%;
+    border-radius: 6rem;
+    backdrop-filter: blur(20px);
+    background-color: #ffffff70;
+    position: absolute;
+    bottom: -20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem 1rem 3rem;
+}
+
+.footer-name {
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: 400;
+}
+
+.footer-price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.footer__add {
+    background-color: #fff;
+    font-size: 1.4rem;
+    border: none;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 4rem;
+}
+
+.footer__add:hover {
+    background-color: #738a6c;
+    cursor: pointer;
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .wrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4rem;
+        position: relative;
+        top: -3rem;
+        padding: 0;
+        width: auto;
+    }
+
+    .nav {
+        flex-direction: column;
+        justify-content: space-evenly;
+        width: 7rem;
+        height: 28.8rem;
+        margin: 0;
+        position: initial;
+    }
+
+    .content {
+        height: 60rem;
+        width: 110rem;
+        position: relative;
+    }
+
+    /* carrucel */
+
+    .carousel__container {
+        --radius: 36rem;
+        --blur-strength: 2px;
+    }
+
+    .carousel__item {
+        width: 20rem;
+        top: 50%;
+    }
+    .carousel__image {
+        height: 20rem;
+        transform: scale(calc(1 + var(--focus) * 0.8));
+    }
+
+    .carousel__item-details {
+        transform: translateY(calc(var(--front-amount) * 5rem));
+    }
+
+    .carousel__controls-container button {
+        display: flex;
+    }
+
+    .carousel__item-title {
+        font-size: 2rem;
+    }
+
+    .carousel__item-price {
+        font-size: 2.2rem;
+    }
+
+    /* contenedor flotante donde se ve los precios del producto */
+    .footer {
+        width: 46rem;
+        height: 11rem;
+        padding: 0 3rem 0 5rem;
+        transform: translate(-50%);
+        left: 50%;
+        bottom: -50px;
+    }
+
+    .footer-name {
+        font-size: 2.2rem;
+    }
+
+    .footer-price {
+        font-size: 2.6rem;
+        font-weight: 800;
+    }
+
+    .footer__add {
+        padding: 1.6rem 3rem;
+        font-size: 1.6rem;
+    }
+}
