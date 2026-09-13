@@ -219,22 +219,6 @@ img {
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
 }
 
-/* Tarjeta translúcida detrás de cada planta lateral, para que se note el cambio
-   de tamaño/blur al moverse. Se desvanece cuando la planta queda de frente, para
-   no taparla. Sin box-shadow ni backdrop-filter: con 10 plantas girando a la vez
-   durante el arrastre, esos dos efectos son los que más cuestan recalcular por
-   frame (lo medimos: costaban ~10fps) y un borde + degradé ya se lee bien. */
-.carousel__item::before {
-    content: "";
-    position: absolute;
-    inset: -1.2rem -1.6rem;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.06));
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 2rem;
-    z-index: -1;
-    opacity: clamp(0, calc((1 - var(--front-amount)) * 5), 1);
-}
-
 /*Todas los contenedores de las imágenes van a tener 10rem altura y la imagen ocupara el 100 de este contenedor*/
 .carousel__image {
     height: 10rem;
