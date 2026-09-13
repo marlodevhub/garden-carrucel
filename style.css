@@ -166,7 +166,7 @@ img {
   /* Distancia del eje central a cada planta; se ajusta por breakpoint más abajo. */
   --radius: 17rem;
   /* Cuánto se emborronan las plantas al alejarse de "frente"; más sutil en desktop. */
-  --blur-strength: 4px;
+  --blur-strength: 8px;
   touch-action: pan-y;
   perspective: 90rem;
   perspective-origin: 50% 55%;
@@ -205,10 +205,10 @@ img {
   top: 60%;
   --angle: 0deg;
   --front-amount: cos(calc(var(--angle) + var(--wheel-rotation)));
-  /* Versión "recortada en 0" y elevada al cuadrado: sube mucho más rápido
-       cerca del frente, para que se note claramente cuál planta es la protagonista
-       en vez de que todas las cercanas se vean igual de grandes. */
-  --focus: calc(max(var(--front-amount), 0) * max(var(--front-amount), 0));
+  /* Versión "recortada en 0" y elevada a la sexta: cae en picada apenas te
+       alejás del frente, para que las plantas de costado se vean claramente
+       más chicas y solo la protagonista (centro) crezca de verdad. */
+  --focus: calc(pow(max(var(--front-amount), 0), 6));
   /* La planta viaja por el círculo (gira, se aleja, cambia de tamaño en
        perspectiva) pero el último rotateY() contra-rota exactamente lo mismo
        que giró antes, así queda siempre de frente/plana, nunca inclinada.
@@ -232,11 +232,11 @@ img {
 
 /*Todas los contenedores de las imágenes van a tener 10rem altura y la imagen ocupara el 100 de este contenedor*/
 .carousel__image {
-  height: 10rem;
+  height: 7rem;
   will-change: transform;
   transition: transform 0.3s ease-in-out;
-  /* La planta que está de frente crece; las de perfil quedan a tamaño base. */
-  transform: scale(calc(1 + var(--focus) * 1.6));
+  /* La planta que está de frente crece bastante; las de perfil quedan a tamaño base. */
+  transform: scale(calc(1 + var(--focus) * 2.2));
 }
 
 .carousel__image img {
@@ -402,7 +402,7 @@ img {
 
   .carousel__container {
     --radius: 36rem;
-    --blur-strength: 2px;
+    --blur-strength: 4px;
   }
 
   .carousel__item {
@@ -411,7 +411,7 @@ img {
   }
   .carousel__image {
     height: 20rem;
-    transform: scale(calc(1 + var(--focus) * 0.8));
+    transform: scale(calc(1 + var(--focus) * 1.3));
   }
 
   .carousel__item-details {
