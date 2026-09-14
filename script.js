@@ -1,6 +1,8 @@
 const carouselContainer = document.querySelector(".carousel__container");
 const carouselItem = document.querySelectorAll(".carousel__item");
 const carouselControlsContainer = document.querySelector(".carousel__controls-container");
+const footerName = document.querySelector(".footer-name");
+const footerPrice = document.querySelector(".footer-price");
 
 const carouselControls = ["prev", "next"]; //Un arreglo con los controles disponibles (prev y next), que servirán para mover el carrusel hacia atrás o adelante.
 
@@ -23,6 +25,7 @@ class Carousel {
         this.dragDelta = 0; // Cuánto giró la rueda en vivo desde que empezó el arrastre (en deg)
         this.sensitivity = 0.35; // Grados que gira la rueda por cada px arrastrado
         this.rafId = null; // requestAnimationFrame pendiente, para aplicar el giro una vez por frame
+        this.frontIndex = null; // índice de la planta que está al frente ahora mismo
 
         this.useControls();
         this.addPointerEvents();
@@ -30,7 +33,26 @@ class Carousel {
     }
 
     applyRotation(extra = 0) {
-        this.carouselContainer.style.setProperty("--wheel-rotation", `${this.rotation + extra}deg`);
+        const total = this.rotation + extra;
+        this.carouselContainer.style.setProperty("--wheel-rotation", `${total}deg`);
+        this.updateFooter(total);
+    }
+
+    // Detecta qué planta quedó al frente con el ángulo actual (en vivo, incluso
+    // a mitad de un arrastre) y, solo si cambió respecto a la anterior, actualiza
+    // el nombre/precio del footer con los de esa planta.
+    updateFooter(total) {
+        const n = this.items.length;
+        let index = Math.round(-total / this.angleStep) % n;
+        if (index < 0) index += n;
+        if (index === this.frontIndex) return;
+        this.frontIndex = index;
+
+        const frontItem = this.items[index];
+        const title = frontItem.querySelector(".carousel__item-title")?.textContent ?? "";
+        const price = frontItem.querySelector(".carousel__item-price")?.textContent ?? "";
+        if (footerName) footerName.textContent = title;
+        if (footerPrice) footerPrice.textContent = price;
     }
 
     // Gira la rueda una cantidad fija de plantas (lo usan los botones prev/next).
