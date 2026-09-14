@@ -166,6 +166,10 @@ img {
   /* Ángulo actual de la rueda (en deg). script.js lo cambia en vivo mientras
        arrastrás, sin límites — por eso el giro es infinito en ambos sentidos. */
   --wheel-rotation: 0deg;
+  /* Duración del encastre al soltar. script.js la recalcula según qué tan
+     rápido veniás arrastrando: un tirón fuerte gira más y tarda más en frenar
+     (como una rueda real con fricción); uno suave frena casi al toque. */
+  --snap-duration: 300ms;
   /* Distancia del eje central a cada planta; se ajusta por breakpoint más abajo. */
   --radius: 13rem;
   /* Cuánto se emborronan las plantas al alejarse de "frente"; más sutil en desktop. */
@@ -194,6 +198,17 @@ img {
 .carousel__container.is-dragging .carousel__image,
 .carousel__container.is-dragging .carousel__item-details {
   transition: none;
+}
+
+/* Antes de que script.js reparta el --angle de cada planta, todas arrancan en
+   0deg (superpuestas, todas visibles) por el valor default de la propiedad.
+   Sin esto, el primer acomodo a sus posiciones reales queda animado por la
+   transición normal y se ve como un salto/crash inicial. Se saca por JS apenas
+   after de ubicarlas la primera vez. */
+.carousel__container.no-init-transition .carousel__item,
+.carousel__container.no-init-transition .carousel__image,
+.carousel__container.no-init-transition .carousel__item-details {
+  transition: none !important;
 }
 
 /* Cada planta vive en un ángulo FIJO alrededor del eje (--angle, asignado una
@@ -233,16 +248,16 @@ img {
 
   will-change: transform, opacity, filter;
   transition:
-    transform 0.3s ease-in-out,
-    opacity 0.3s ease-in-out,
-    filter 0.3s ease-in-out;
+    transform var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    filter var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /*Todas los contenedores de las imágenes van a tener 10rem altura y la imagen ocupara el 100 de este contenedor*/
 .carousel__image {
   height: 5rem;
   will-change: transform;
-  transition: transform 0.3s ease-in-out;
+  transition: transform var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1);
   /* La planta que está de frente crece bastante; las de perfil quedan a tamaño base. */
   transform: scale(calc(1 + var(--focus) * 2.8));
 }
@@ -258,8 +273,8 @@ img {
   text-align: center;
   will-change: transform, opacity;
   transition:
-    transform 0.3s ease-in-out,
-    opacity 0.3s ease-in-out;
+    transform var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--snap-duration) cubic-bezier(0.22, 1, 0.36, 1);
   /* El texto se oculta en la planta de frente (queda solo la imagen grande,
        igual que antes) y aparece en las de perfil, encogiéndose a medida que
        la planta se aleja del centro (igual que la imagen). */
