@@ -167,9 +167,14 @@ img {
        arrastrás, sin límites — por eso el giro es infinito en ambos sentidos. */
   --wheel-rotation: 0deg;
   /* Distancia del eje central a cada planta; se ajusta por breakpoint más abajo. */
-  --radius: 17rem;
+  --radius: 13rem;
   /* Cuánto se emborronan las plantas al alejarse de "frente"; más sutil en desktop. */
-  --blur-strength: 8px;
+  --blur-strength: 12px;
+  /* A partir de qué --front-amount empieza a aparecer el blur. En 1 (default)
+     empieza a emborronar apenas se aleja del centro. En desktop lo bajamos para
+     que las dos vecinas visibles queden 100% nítidas y el blur solo aparezca
+     en las que ya casi no se ven. */
+  --blur-start: 1;
   touch-action: pan-y;
   perspective: 90rem;
   perspective-origin: 50% 55%;
@@ -199,7 +204,7 @@ img {
    sin loop de JS ni animación manual. */
 .carousel__item {
   position: absolute;
-  width: 10rem;
+  width: 9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -221,7 +226,7 @@ img {
     translateZ(var(--radius))
     rotateY(calc(-1 * (var(--angle) + var(--wheel-rotation))));
   opacity: clamp(0, calc((var(--front-amount) - 0.3) / 0.5), 1);
-  filter: blur(calc((1 - var(--front-amount)) * var(--blur-strength)));
+  filter: blur(calc(max(0, var(--blur-start) - var(--front-amount)) * var(--blur-strength)));
   /* Los items no deben capturar clicks: bloqueaban los botones de navegación
        que están debajo. */
   pointer-events: none;
@@ -235,11 +240,11 @@ img {
 
 /*Todas los contenedores de las imágenes van a tener 10rem altura y la imagen ocupara el 100 de este contenedor*/
 .carousel__image {
-  height: 7rem;
+  height: 5rem;
   will-change: transform;
   transition: transform 0.3s ease-in-out;
   /* La planta que está de frente crece bastante; las de perfil quedan a tamaño base. */
-  transform: scale(calc(1 + var(--focus) * 2.2));
+  transform: scale(calc(1 + var(--focus) * 2.8));
 }
 
 .carousel__image img {
@@ -411,15 +416,19 @@ img {
 
   .carousel__container {
     --radius: 37rem;
-    --blur-strength: 4px;
+    /* Las dos vecinas visibles (izquierda/derecha) quedan 100% nítidas: el
+       blur no arranca hasta pasar ese punto (--blur-start más bajo que su
+       --front-amount), y solo se nota en las que ya casi no se ven. */
+    --blur-start: 0.75;
+    --blur-strength: 10px;
   }
 
   .carousel__item {
-    width: 14rem;
+    width: 13rem;
     top: 58%;
   }
   .carousel__image {
-    height: 14rem;
+    height: 13rem;
     transform: scale(calc(1 + var(--focus) * 0.8));
   }
 
